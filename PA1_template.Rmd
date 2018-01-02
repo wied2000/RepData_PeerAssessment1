@@ -9,7 +9,7 @@ output:
 
 ## Loading and preprocessing the data
 
-####1. Load the data (i.e. read.csv())
+1. Load the data (i.e. read.csv())
 
 - Download data
 ```{r download}
@@ -27,14 +27,14 @@ unzip ("DS5w2data.zip")
 activity <- read.csv("activity.csv")
 ```
 
-####2. Process/transform the data (if necessary) into a format suitable for your analysis
+2. Process/transform the data (if necessary) into a format suitable for your analysis
 ```{r activity_date}
 activity$date<-as.Date(activity$date)
 ```
 
 
 ## What is mean total number of steps taken per day?
-####1. Make a histogram of the total number of steps taken each day
+1. Make a histogram of the total number of steps taken each day
 - Total daily steps
 ```{r activity_total_daily_steps}
 TotalDailySteps <- aggregate(steps ~ date,activity,sum)
@@ -45,7 +45,7 @@ TotalDailySteps <- aggregate(steps ~ date,activity,sum)
 hist(TotalDailySteps$steps,main="Total Daily Steps",ylab="Frequency",xlab="number of steps")
 ```
 
-####2. Calculate and report the mean and median total number of steps taken per day
+2. Calculate and report the mean and median total number of steps taken per day
 - mean total number of steps taken per day
 ```{r activity_mean}
 mean(TotalDailySteps$steps)
@@ -57,7 +57,7 @@ median(TotalDailySteps$steps)
 
 
 ## What is the average daily activity pattern?
-####1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 - check the min and max of the 5 min interval
 ```{r activity_max_min}
@@ -74,7 +74,7 @@ AveSteps5min <- aggregate(steps ~ interval,activity,mean)
 plot(AveSteps5min$interval,AveSteps5min$steps, type = 'l',main="Average number of steps in 5-minute interval",ylab="Number of steps",xlab="Interval")
 ```
 
-####2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 - 5-minute interval contains the maximum number of steps
 ```{r ctivity_AveSteps5min_Max_Interval}
@@ -82,18 +82,18 @@ AveSteps5min[which.max(AveSteps5min$steps),1]
 ```
 
 ## Imputing missing values
-####1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
 - The total number of missing values in the dataset
 ```{r activity_total_NA}
 sum(is.na(activity))
 ```
 
-####2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
 - The mean for that 5-minute interval will be use for filling the missing data
 
-####3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 ```{r newactivity}
 newactivity <- merge(x = activity, y = AveSteps5min, by = "interval", all.x = TRUE)
@@ -103,7 +103,7 @@ fill the missing values
 ```{r newactivity_fill_NA}
 newactivity$steps.x[is.na(newactivity$steps.x)] = newactivity[is.na(newactivity$steps.x),]$steps.y
 ```
-####4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
+4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
 - New Total daily steps
 ```{r newactivity_total_daily_steps}
 newTotalDailySteps <- aggregate(steps.x ~ date,newactivity,sum)
@@ -112,7 +112,6 @@ newTotalDailySteps <- aggregate(steps.x ~ date,newactivity,sum)
 - Histogram new Total daily steps
 ```{r hist_newactivity_total_daily_steps}
 hist(newTotalDailySteps$steps.x,main="New Total Daily Steps",ylab="Frequency",xlab="number of steps")
-
 ```
 
 #### Do these values differ from the estimates from the first part of the assignment? 
@@ -142,7 +141,7 @@ boxplot(TotalDailySteps$steps,newTotalDailySteps$steps.x,main="Old vs new",names
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-####1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
 ```{r weekday_weekend}
 newactivity$day_type = weekdays(newactivity$date)
@@ -152,16 +151,12 @@ newactivity$day_type <- as.factor(newactivity$day_type)
 head(newactivity$day_type)
 ```
 
-####2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
+2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
 ```{r plot_weekday_weekend}
-
-
 newAveSteps5min= aggregate(steps.x ~ interval + day_type, newactivity, mean)
 library(lattice)
 xyplot(steps.x ~ interval | factor(day_type), data = newAveSteps5min, aspect = 1/2, 
     type = "l", ylab="Number of steps", xlab="Interval")
-
-
 ```
 
